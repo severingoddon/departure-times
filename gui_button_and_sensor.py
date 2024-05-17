@@ -12,6 +12,7 @@ subprocess.Popen(command, shell=True)
 
 GPIO.setmode(GPIO.BOARD)
 PIR_PIN = 10
+GPIO.setup(PIR_PIN, GPIO.IN)
 update_job = None
 button_lock = False
 pir_lock = False
@@ -27,7 +28,7 @@ def write_to_file():
     file_path = os.path.join(directory, "logfile.txt")
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open(file_path, "a") as file:
-        file.write(f"{current_time} - load called\n")
+        file.write(f"{current_time} - load data called\n")
 
 
 def turn_on_screen():
@@ -46,6 +47,8 @@ def button_callback_hb(channel):
     if button_lock:
         return
 
+    turn_on_screen()
+
     loadType = "hb"
     button_lock = True
     root.after(2000, unlock_button)
@@ -60,6 +63,7 @@ def button_callback_esch(channel):
     if button_lock:
         return
 
+    turn_on_screen()
     loadType = "esch"
     button_lock = True
     root.after(2000, unlock_button)
@@ -74,7 +78,7 @@ def button_callback_bus(channel):
 
     if button_lock:
         return
-
+    turn_on_screen()
     loadType = "bus"
     button_lock = True
     root.after(2000, unlock_button)
@@ -88,7 +92,6 @@ def pir_callback(channel):
 
     if pir_lock:
         return
-
     pir_lock = True
     root.after(30000, unlock_pir)
     root.after_cancel(update_job)
@@ -113,8 +116,8 @@ def update_departure_board():
 
     if GPIO.input(PIR_PIN) == 1:
         turn_on_screen()
+        write_to_file()
         departures = DepartureBoard.get_departures(dep, loadType)
-        write_to_file()  # only for debug purpose
 
         for widget in departure_frame.winfo_children():
             widget.destroy()
