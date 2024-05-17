@@ -2,17 +2,15 @@ from datetime import datetime
 import requests
 
 class DepartureBoardNew:
-    def __init__(self):
-        self.url = "https://search.ch/fahrplan/api/stationboard.json"
-        self.params = {
+
+    def send_request(self):
+        params = {
             "stop": "Limmatplatz",
             "limit": 30,
             "show_delays": 1,
             "show_subsequent_stops": 1
         }
-
-    def send_request(self):
-        response = requests.get(self.url, params=self.params)
+        response = requests.get("https://search.ch/fahrplan/api/stationboard.json", params=params)
         return response.json()
 
     def filter_departures(self, json_response, loadType):
