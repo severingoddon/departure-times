@@ -1,6 +1,8 @@
 from datetime import datetime
 import requests
 
+# API docs: https://search.ch/timetable/api/help
+
 class DepartureBoardNew:
 
     def send_request(self):

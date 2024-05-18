@@ -3,7 +3,6 @@ from tkinter import font
 from loadDataNewAPI import DepartureBoardNew
 
 def update_departure_board():
-    print("dep")
     dep = DepartureBoardNew()
     departures = DepartureBoardNew.get_departures(dep, "esch")
 
@@ -32,7 +31,7 @@ def update_departure_board():
         direction_label.grid(row=index, column=1, sticky="ew", padx=(0, 65))
         minutes_label.grid(row=index, column=2, sticky="ew")
 
-    root.after(5000, update_departure_board)
+    root.after(30000, update_departure_board)
 
 root = tk.Tk()
 root.title("Abfahrtstafel")
