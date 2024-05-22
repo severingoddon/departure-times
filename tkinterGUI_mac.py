@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font
-from loadDataNewAPI import DepartureBoardNew
+from load_data import DepartureBoardNew
 
 def update_departure_board():
     dep = DepartureBoardNew()

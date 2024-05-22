@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from datetime import datetime
 from tkinter import font
-from load_data import DepartureBoard
+from load_data import DepartureBoardNew
 import RPi.GPIO as GPIO
 import subprocess
 import time
@@ -19,7 +19,7 @@ pir_lock = False
 motion_detected = False
 loadType = "hb"
 
-dep = DepartureBoard()
+dep = DepartureBoardNew()
 
 
 # only for debug purpose
@@ -114,36 +114,40 @@ def update_departure_board():
     global dep
     global loadType
 
-    if GPIO.input(PIR_PIN) == 1:
-        turn_on_screen()
-        write_to_file()
-        departures = DepartureBoard.get_departures(dep, loadType)
+    current_time = datetime.now().time()
+    if not (datetime.strptime("01:00:00", "%H:%M:%S").time() <= current_time <= datetime.strptime("07:00:00", "%H:%M:%S").time()):
+        if GPIO.input(PIR_PIN) == 1:
+            turn_on_screen()
+            write_to_file()
+            departures = DepartureBoardNew.get_departures(dep, loadType)
 
-        for widget in departure_frame.winfo_children():
-            widget.destroy()
+            for widget in departure_frame.winfo_children():
+                widget.destroy()
 
-        max_width = 420
-        font_size = max_width // 60
-        custom_font = font.Font(family="Goddonis Font", size=font_size + 62)
+            max_width = 420
+            font_size = max_width // 60
+            custom_font = font.Font(family="Goddonis Font", size=font_size + 62)
 
-        for index, departure in enumerate(departures, start=1):
-            line_label = tk.Label(departure_frame, text=departure['line'], font=custom_font, fg="#fb7500", bg='black',
-                                  anchor=tk.E)
-            direction_label = tk.Label(departure_frame, text=departure['direction'], font=custom_font, fg="#fb7500",
-                                       bg='black', anchor=tk.W)
+            for index, departure in enumerate(departures, start=1):
+                line_label = tk.Label(departure_frame, text=departure['line'], font=custom_font, fg="#fb7500", bg='black',
+                                      anchor=tk.E)
+                direction_label = tk.Label(departure_frame, text=departure['direction'], font=custom_font, fg="#fb7500",
+                                           bg='black', anchor=tk.W)
 
-            if departure['minutes_until_departure'] == 0:
-                minutes_label = tk.Label(departure_frame, text=f"ÿ", font=custom_font,
-                                         fg="#fb7500", bg='black', anchor=tk.W)
+                if departure['minutes_until_departure'] <= 0:
+                    minutes_label = tk.Label(departure_frame, text=f"ÿ", font=custom_font,
+                                             fg="#fb7500", bg='black', anchor=tk.W)
 
-            else:
-                minutes_label = tk.Label(departure_frame, text=f"{departure['minutes_until_departure']}'",
-                                         font=custom_font,
-                                         fg="#fb7500", bg='black', anchor=tk.W)
+                else:
+                    minutes_label = tk.Label(departure_frame, text=f"{departure['minutes_until_departure']}'",
+                                             font=custom_font,
+                                             fg="#fb7500", bg='black', anchor=tk.W)
 
-            line_label.grid(row=index, column=0, sticky="ew", padx=(40, 60))
-            direction_label.grid(row=index, column=1, sticky="ew", padx=(0, 65))
-            minutes_label.grid(row=index, column=2, sticky="ew")
+                line_label.grid(row=index, column=0, sticky="ew", padx=(40, 60))
+                direction_label.grid(row=index, column=1, sticky="ew", padx=(0, 65))
+                minutes_label.grid(row=index, column=2, sticky="ew")
+        else:
+            turn_off_screen()
     else:
         turn_off_screen()
 
