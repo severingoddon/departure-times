@@ -18,10 +18,16 @@ class DepartureBoardNew:
     def filter_departures(self, json_response, loadType):
         filtered_departures = []
         departures = json_response.get('connections', [])
+
         for departure in departures:
             delay = 0
+            isOperating = True
             if 'dep_delay' in departure:
-                delay = int(departure['dep_delay'].strip("+"))
+                delay_str = departure['dep_delay'].strip("+")
+                if delay_str.isdigit():
+                    delay = int(delay_str)
+                elif 'X' in delay_str.upper():
+                    isOperating = False
             current_time = datetime.now()
             departure_time = datetime.strptime(departure['time'], "%Y-%m-%d %H:%M:%S")
             minutes_until_departure = int((departure_time - current_time).total_seconds() / 60) + delay
@@ -30,9 +36,10 @@ class DepartureBoardNew:
             if direction == "Zürich Altstetten, Bahnhof Nord":
                 direction = "Zürich, Bahnhof Altstetten"
             next_stop = departure['subsequent_stops'][0]['name']
-            filtered_departures.append(
-                {"line": line_number, "direction": direction, "minutes_until_departure": minutes_until_departure,
-                 "next_stop": next_stop})
+            if minutes_until_departure < 99:
+                filtered_departures.append(
+                    {"line": line_number, "direction": direction, "minutes_until_departure": minutes_until_departure,
+                     "next_stop": next_stop, "is_operating": isOperating})
         return self.filter_departure_direction(filtered_departures, loadType)
 
     def filter_departure_direction(self, prefiltered_departures, loadType):
@@ -74,7 +81,7 @@ class DepartureBoardNew:
 
 if __name__ == "__main__":
     departure_board = DepartureBoardNew()
-    departures = departure_board.get_departures("esch")
+    departures = departure_board.get_departures("hb")
     if departures:
         for departure in departures:
             print(departure)
