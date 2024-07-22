@@ -110,7 +110,6 @@ def unlock_pir():
     global pir_lock
     pir_lock = False
 
-
 def update_departure_board():
     global update_job
     global motion_detected
@@ -121,7 +120,6 @@ def update_departure_board():
     if not (datetime.strptime("00:30:00", "%H:%M:%S").time() <= current_time <= datetime.strptime("07:00:00", "%H:%M:%S").time()):
         if GPIO.input(PIR_PIN) == 1:
             turn_on_screen()
-            write_to_file()
             departures = DepartureBoardNew.get_departures(dep, loadType)
 
             for widget in departure_frame.winfo_children():
@@ -168,7 +166,6 @@ def update_departure_board():
         turn_off_screen()
 
     update_job = root.after(30000, update_departure_board)
-
 
 def setup_gpio():
     GPIO.setwarnings(False)

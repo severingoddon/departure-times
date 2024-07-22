@@ -18,7 +18,6 @@ class DepartureBoardNew:
     def filter_departures(self, json_response, loadType):
         filtered_departures = []
         departures = json_response.get('connections', [])
-
         for departure in departures:
             delay = 0
             isOperating = True
@@ -81,7 +80,7 @@ class DepartureBoardNew:
 
 if __name__ == "__main__":
     departure_board = DepartureBoardNew()
-    departures = departure_board.get_departures("hb")
+    departures = departure_board.get_departures("esch")
     if departures:
         for departure in departures:
             print(departure)
