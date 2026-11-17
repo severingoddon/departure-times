@@ -162,9 +162,11 @@ def update_departure_board():
         else:
             turn_off_screen()
 
-        update_job = root.after(30000, update_departure_board)
     except Exception as e:
         logging.error("Error in update_departure_board: %s", str(e))
+    finally:
+        # Always schedule the next refresh, also after an error (e.g. network or API failure)
+        update_job = root.after(30000, update_departure_board)
 
 def setup_gpio():
     GPIO.setwarnings(False)
