@@ -1,0 +1,5 @@
+requests
+Pillow
+cairosvg
+# Raspberry Pi only (GPIO for buttons and motion sensor)
+RPi.GPIO; platform_machine == "aarch64" or platform_machine == "armv7l"

@@ -1,1 +1,13 @@
+# Local GTFS experiments (contains an API token)
 /OpenTransportdataAPI/
+
+# Runtime
+logfile.txt
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# IDE / OS
+.idea/
+.DS_Store
